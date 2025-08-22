@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
         const Database = await connectToDatabase();
         console.log('Database connected');
 
-// cek tabel
+// cek tabel database
         const [rows] = await Database.query('SELECT * FROM `users` WHERE Email = ?', [email]);
         console.log('Query result:', rows);
 
@@ -69,14 +69,13 @@ router.post('/register', async (req, res) => {
     }
 
 });
-//Login
+//login
 router.post('/login', async (req, res) => {
     console.log('Login endpoint hit!');
     console.log('Request body:', req.body);
 
     const { username, password } = req.body;
 
-    // Validasi input
     if (!username || !password) {
         return res.status(400).json({
             message: "Username and password are required"
@@ -87,7 +86,6 @@ router.post('/login', async (req, res) => {
         const Database = await connectToDatabase();
         console.log('Database connected');
 
-        // Cek apakah user ada
         const [rows] = await Database.query('SELECT id, username, password FROM `users` WHERE username = ?', [username]);
         console.log('Query result:', rows);
 
@@ -98,7 +96,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Debug: cek data yang diterima
         console.log('User found:', {
             id: rows[0].id,
             username: rows[0].username,
@@ -114,8 +111,7 @@ router.post('/login', async (req, res) => {
                 message: "Invalid username or password"
             });
         }
-
-        // Verifikasi password
+        
         const isMatch = await bcrypt.compare(password, rows[0].password);
         if (!isMatch) {
             console.log('Password mismatch');
@@ -124,7 +120,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Generate JWT token
         const token = jwt.sign(
             { 
                 id: rows[0].id, 
@@ -166,7 +161,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Middleware untuk verifikasi token - dipindah ke luar router.post
 const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization'];
@@ -179,7 +173,6 @@ const verifyToken = async (req, res, next) => {
             return res.status(403).json({ message: "Access denied, invalid token format" });
         }
 
-        // Fixed typo: jwt.verify (bukan jwt.verivy)
         const decoded = jwt.verify(token, process.env.JWT_KEY);
         req.userId = decoded.id;
         next();
@@ -189,7 +182,6 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-// Home route dengan middleware verifyToken
 router.get('/home', verifyToken, async (req, res) => {
     try {
         const Database = await connectToDatabase();
