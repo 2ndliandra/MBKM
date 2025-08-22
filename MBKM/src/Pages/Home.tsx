@@ -38,7 +38,6 @@ const TodoApp: React.FC = () => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  // Categories configuration
   const categories: { value: CategoryType; label: string; color: string }[] = [
     { value: 'work', label: '💼 Work', color: 'bg-blue-100 text-blue-800' },
     { value: 'personal', label: '🏠 Personal', color: 'bg-green-100 text-green-800' },
@@ -53,15 +52,13 @@ const TodoApp: React.FC = () => {
         try {
             setIsLoading(true);
             await new Promise(resolve => setTimeout(resolve, 1000));
-      
-            // Reset token dari localStorage (jika ada)
+    
             localStorage.removeItem('authToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('userToken');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('jwt');
             
-            // Reset session storage
             sessionStorage.removeItem('authToken');
             sessionStorage.removeItem('userSession');
 
@@ -170,7 +167,6 @@ const TodoApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="border-b border-gray-400 bg-gradient-to-r from-[#3E5F44] to-[#151f16] shadow-lg">
         <div className="container mx-auto px-10 py-5">
           <h2 className="h-auto text-lg text-white font-bold">TODO-APP</h2>
@@ -203,7 +199,6 @@ const TodoApp: React.FC = () => {
         </div>
 
           <div className="space-y-10">
-            {/* Category Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Select Category
@@ -274,7 +269,6 @@ const TodoApp: React.FC = () => {
           ))}
         </section>
 
-        {/* Todo List */}
         <section className="space-y-3">
           {filteredTodos.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-lg shadow-md">
@@ -299,8 +293,7 @@ const TodoApp: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    
-                    {/* Checkbox */}
+
                     <button
                       onClick={() => toggleTodo(todo.id)}
                       className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
@@ -312,7 +305,6 @@ const TodoApp: React.FC = () => {
                       {todo.completed && <Check size={16} />}
                     </button>
 
-                    {/* Todo Content */}
                     <div className="flex-1 min-w-0">
                       {editingId === todo.id ? (
                         <input
